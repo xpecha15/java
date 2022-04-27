@@ -1,0 +1,92 @@
+------------------------------------------- Logika programu -----------------------------------------------------------------
+
+Program funguje jako databazovy system pro ukladani studentu do 3 oboru. Obsahuje vsechny funkce podle zadani.
+Data se ukladaji do lokalniho textoveho souboru nebo do SQLite databaze. Program dovoluje synchronizovat ukladani
+dat mezi SQL a lokalnim textovym souborem. Uzivatel musi synchronizaci povolit pomoci prikazu '101'. Pote vsechny zmeny,
+ktere uzivatel provede v menu 'local' (menu pro spravu dat v textovych souborech) se automaticky provede i v SQL databazi
+a nemusi tedy provadet zmeny zvlast i v menu 'SQL' (ktere slouzi pro spravu dat v SQL databazi studentsDB.db). Pokud nejsou
+lokalni data stejna jako data v databazi muze dochazet k odmitnuti provedeni zmen. Databazi je take mozne updatetovat prikazem
+'update query' (slouzi hlavne pro aktualizaci prumeru studentu v databazi, kdyz se zmeni znamky).
+
+----------------------------- Menu -------------------------------------------------------------------------------------------
+
+	1	 - add student	   	   - pridani studenta a zarazeni ho do oboru	 
+	2	 - add mark		   	   - pridani znamky studentovi podle ID		 	 
+	3	 - delete student          - smazani studenta z lokalniho souboru     	 
+	4	 - search for student      - hledani informaci o studentovi dle ID    	 
+	5	 - show skill		   - zavolani spec. schopnosti studenta		 	 
+	6	 - local data		   - vypsani studentu v lokalnim souboru txt  	 
+	7	 - spec marks		   - vypsani prumeru zadaneho oboru 			 
+	8	 - students sum		   - vypsani celkoveho poctu studentu oboru   	 
+	9	 - save			   - ulozeni studentu do lokalniho txt souboru 	 
+	10	 - load			   - nacteni studentu z lokalniho txt souboru	 
+	0	 - exit			   - ukonceni programu							 
+	11 	 - load (SQL)		   - nacteni studentu ze SQL databaze			 
+	12	 - save (SQL)		   - ulozeni studentu do SQL databaze			 
+	13	 - database			   - vypsani studentu ulozenych v databazi       	
+	14	 - delete student (SQL)    - smazani studenta ze SQL databaze 			 
+	15	 - update query		   - aktualizace veskerych dat v databazi		 
+
+	 
+------------------------- Popis trid programu ---------------------------------------------------------------------------------
+	
+ 	
+Abstraktni trida student :
+-------------------------
+
+- obsahuje gettery a settery atributu, ktere jsou spolecne pro vsechny studenty, tj. pro Technician, Humanist a Combi
+
+- obsahuje abstract void saySomeExtra(), coz je metoda, kterou kazdy student implementuje po svem (prestupny rok, znameni nebo oboje)
+
+- mimo to obsahuje jeste specialni metody jako metodu pro zaokrouhlovani nebo metodu pro export znamek do textoveho souboru
+
+- je to rodicovska trida pro tridy Technician, Humanist a Combi
+
+
+Tridy Technician, Humanist a Combi :
+----------------------------------
+
+- dedi ze tridy Student a obsahuji svoje specialni metody saySomeExtra(), ktere definuji jejich schopnosti podle zadani
+
+
+Trida Main :
+------------
+
+- obsahuje graficke menu udelane pomoci ASCII znaku, ktere se s funkcemi deli na:
+
+	- LOCAL : obsahuje vsechny funkce ze zadani projektu a data uklada do lokalniho textoveho souboru root/data.txt
+			  a root/marks.txt
+	- SQL   : umoznuje ulozit data do SQLite databaze, nacitat z ni data a updatovat tabulku
+	
+- funkce se volaji ze tridy Database pomoci switche, kdy uzivatel zada cislo prislusneho prikazu podle menu
+
+
+Trida Database :
+----------------
+
+- obsahuje vsechny funkce programu, studenti se ukladaji zvlast podle oboru do 3 TreeMap, lze jim pridat znamky, ktere se ukladaji zvlast 
+  do HashMapy ve tride Student. Ze znamek se nasledne pocita prumer, ktery je zaokrouhlovan na dve desetinna mista
+
+- trida obsahuje vsechny funkce, ktere byly zadane garantem v projektu, bohuzel se mi ale nepodarilo tridit pri vypisu studenty podle prijmeni
+
+- studenti se ukladaji do textoveho souboru root/data.txt, kazdy student mimo osobni informace obsahuje jedinecne ID a identifikator oboru, 
+  podle ktereho je zarazen do prislusne TreeMapy pri opetovnem nacitani studentu do programu
+
+- znamky studentu jsou take ukladany zvlast do souboru root/marks.txt kde jsou ulozeny s ID studenta. Po nacteni studenta se podle jeho ID
+  nactou i znamky do HashMapy marks ve tride Student
+
+- pri nacitani studentu je do konzole vypsan prubeh nacteni a pocet pripadnych erroru. Error muze vzniknout napr. kdyz program nacte studenta
+  s ID, ktere jiz v programu existuje. Uzivatel pak v konzoli primo vidi, jakeho studenta se tento error tyka popripade kolik takovych erroru nastalo
+
+- do konzole je rovnez vypsano i prirazeni znamek ke studentovi. Pri vyssim poctu studentu muze byt tento vypis extremne neprehledny, ja se ale rozhodl 
+  ho pro demonstraci programu ponechat
+
+- trida Main pracuje i se SQL metodama ze tridy SQL
+
+
+Trida SQL :
+----------
+
+- obsahuje vsechny funkce nutne pro fungovani jednoducheho ukladani do SQLite databaze
+
+
